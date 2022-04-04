@@ -1,0 +1,8 @@
+# Hide actual ping data
+data/
+
+# Hide node_modules
+node_modules/
+
+# Hide config
+config/config.json

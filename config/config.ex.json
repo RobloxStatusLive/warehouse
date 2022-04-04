@@ -1,0 +1,4 @@
+{
+    "warehouse.dataLocation": "./data",
+    "warehouse.webServerPort": 8080
+}
