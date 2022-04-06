@@ -6,3 +6,6 @@ node_modules/
 
 # Hide config
 config/config.json
+
+# Hide logs
+logs/

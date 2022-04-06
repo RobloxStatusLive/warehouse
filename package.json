@@ -1,6 +1,6 @@
 {
   "name": "warehouse",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "The Roblox Status Live data warehouse",
   "main": "index.js",
   "scripts": {
@@ -19,6 +19,7 @@
   },
   "homepage": "https://github.com/RobloxStatusLive/warehouse#readme",
   "dependencies": {
+    "@dmmdjs/dtools": "^0.0.3",
     "axios": "^0.26.1",
     "express": "^4.17.3",
     "md5-file": "^5.0.0"
