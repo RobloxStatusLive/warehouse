@@ -18,8 +18,6 @@ log.on("beforeWrite", options => {
         raw: false
     }));
 });
-
-
 const writeLog = (title, message) => log.write({}, { title, message });
 
 // Service handler class
@@ -94,7 +92,7 @@ class ServiceHandler {
      */
     mainloop() {
         writeLog("START", "Warehouse has been started.");
-        setInterval(this.fetch, 60000);
+        setInterval(() => { this.fetch(); }, 60000);
         this.fetch();
     }
 }
