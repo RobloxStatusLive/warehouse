@@ -80,12 +80,13 @@ class ServiceHandler {
                 // Save data
                 dumpData[service.id] = {
                     id: service.id,
-                    ping: ping,
-                    machineID: req.headers["roblox-machine-id"],
                     url: `https://${service.id}.roblox.com`,
                     code: code,
-                    message: req.statusText,
-                    guess: guess
+                    ping: ping,
+                    guess: guess,
+                    name: service.name,
+                    machineID: req.headers["roblox-machine-id"],
+                    message: req.statusText
                 };
             } catch (e) { writeLog("ERROR", `Failed to record ${service.id} service: ${e.toString()}`); };
         }
