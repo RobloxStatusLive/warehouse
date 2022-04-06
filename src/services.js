@@ -53,18 +53,27 @@ class ServiceHandler {
      */
     async fetch() {
         let dumpData = {};
-        let responses = await Promise.all(this.services.map(v => {
+        for (let service of this.services) {
             try {
-                return this.ax.get(`https://${v.id}.roblox.com/${v.endpoint ?? ''}`);
+                let req = await this.ax.get(`https://${service.id}.roblox.com/${service.endpoint ?? ''}`);
+
+                // Calculate status
+                let ping = req.headers.whReqElapsed, code = req.status, guess = "up";
+                if (code !== 200 || ping > (service.threshold || 500) ) guess = "down";
+
+                // Save data
+                dumpData[service.id] = {
+                    ping: ping,
+                    machineID: req.headers["roblox-machine-id"],
+                    url: `https://${service.id}.roblox.com`,
+                    code: code,
+                    message: req.statusText,
+                    guess: guess
+                };
             } catch (e) {
-                console.log(`[Warehouse] Failed to record ${v.id} service: ${e.toString()}`);
+                console.log(`[Warehouse] Failed to record ${service.id} service: ${e.toString()}`);
             };
-        }));
-        for (let i = 0; i < responses.length; i++) dumpData[this.services[i].id] = {
-            ping: responses[i].headers.whReqElapsed,
-            machineID: responses[i].headers["roblox-machine-id"],
-            url: `https://${this.services[i].id}.roblox.com`
-        };
+        }
         this.dump(dumpData);
     }
 
