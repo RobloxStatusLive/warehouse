@@ -15,7 +15,7 @@ class ServiceHandler {
         this.dtf = new Intl.DateTimeFormat("en-US");
 
         // Initialize data directory
-        if (!fs.existsSync(config["warehouse.dataLocation"])) fs.mkdir(config["warehouse.dataLocation"], { recursive: true });
+        if (!fs.existsSync(config["warehouse.dataLocation"])) fs.mkdirSync(config["warehouse.dataLocation"], { recursive: true });
 
         // Initialize axios
         this.ax = axios.create();
