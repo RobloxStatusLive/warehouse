@@ -44,6 +44,6 @@ app.get("/sync/:date", (req, res) => {
 })
 
 // Start app
-app.listen(config["warehouse.webServerPort"], () => {
+app.listen(process.env.PORT || config["warehouse.webServerPort"], () => {
     console.log(`[Warehouse]: Express server is running ...`);
 })
