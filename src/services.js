@@ -70,11 +70,16 @@ class ServiceHandler {
                 let req = await this.ax.get(`https://${service.id}.roblox.com/${service.endpoint ?? ''}`);
 
                 // Calculate status
-                let ping = req.headers.whReqElapsed, code = req.status, guess = "up";
-                if (code !== 200 || ping > (service.threshold || 500) ) guess = "down";
+                let ping = req.headers.whReqElapsed,
+                    code = req.status,
+                    guess = { name: "up", reason: "No problems detected" };
+
+                if (code !== 200) guess = { name: "down", reason: "Non-200 status code" }
+                else if (ping > (service.threshold || 500) ) guess = { name: "down", reason: "Ping exceeds threshold" };
 
                 // Save data
                 dumpData[service.id] = {
+                    id: service.id,
                     ping: ping,
                     machineID: req.headers["roblox-machine-id"],
                     url: `https://${service.id}.roblox.com`,
