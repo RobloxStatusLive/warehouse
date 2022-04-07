@@ -5,8 +5,8 @@
 // Modules
 const fs = require("fs");
 const path = require("path");
+const crypto = require('crypto');
 const express = require("express");
-const md5File = require("md5-file");
 
 const config = require("../config/config.json");
 
@@ -23,7 +23,7 @@ function getPastWeek() {
     for (let i = 0; i < 5; i++) {
         let date = formatDate(new Date(now - (i * 86400000)));
         let fpath = path.resolve(config["warehouse.dataLocation"], `${date}.json`);
-        if (fs.existsSync(fpath)) week[date] = md5File.sync(fpath);
+        if (fs.existsSync(fpath)) week[date] = crypto.createHash("md5").update(fs.readFileSync(fpath)).digest("hex");
     }
     return week;
 }
