@@ -52,7 +52,7 @@ class ServiceHandler {
      */
     async dump(data) {
         let dateFile = path.resolve(config["warehouse.dataLocation"], `${this.now}.json`);
-        let fileData = fs.existsSync(dateFile) ? JSON.parse(fs.readFileSync(dateFile)) : {};
+        try { let fileData = fs.existsSync(dateFile) ? JSON.parse(fs.readFileSync(dateFile)) : {}; } catch { let fileData = {}; }
         fileData[Date.now()] = data;
         fs.writeFile(dateFile, JSON.stringify(fileData), (e) => {
             if (e) return console.error(e);
