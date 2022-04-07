@@ -6,19 +6,11 @@
 const fs = require("fs");
 const path = require("path");
 const axios = require("axios").default;
-const DTools = require("@dmmdjs/dtools");
+const { Log } = require("@dmmdjs/dtools");
 const config = require("../config/config.json");
 
 // Logging intialization
-const log = new DTools.Log({ autoClose: true, autoCreate: true, autoOpen: true });
-log.on("beforeWrite", options => {
-    process.stdout.write(log.options.formatter({
-        title: options.formatterParameters[0].title,
-        message: options.formatterParameters[0].message,
-        raw: false
-    }));
-});
-const writeLog = (title, message) => log.write({}, { title, message });
+let log = new Log("logs/latest.log");
 
 // Service handler class
 class ServiceHandler {
@@ -57,7 +49,7 @@ class ServiceHandler {
         fileData[Date.now()] = data;
         fs.writeFile(dateFile, JSON.stringify(fileData), (e) => {
             if (e) return console.error(e);
-            writeLog("WRITE", "Service times have been written to file.");
+            log.log({ title: "WRITE", message: "Service times have been written to file." });
         });
     }
 
@@ -89,7 +81,7 @@ class ServiceHandler {
                     machineID: req.headers["roblox-machine-id"],
                     message: req.statusText
                 };
-            } catch (e) { writeLog("ERROR", `Failed to record ${service.id} service: ${e.toString()}`); };
+            } catch (e) { log.log({ title: "ERROR", message: `Failed to record ${service.id} service: ${e.toString()}` }); };
         }
         this.dump(dumpData);
     }
@@ -98,7 +90,7 @@ class ServiceHandler {
      * Starts the warehouse main loop
      */
     mainloop() {
-        writeLog("START", "Warehouse has been started.");
+        log.log({ title: "START", message: "Warehouse has been started." });
         setInterval(() => { this.fetch(); }, 60000);
         this.fetch();
     }

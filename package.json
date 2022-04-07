@@ -19,7 +19,7 @@
   },
   "homepage": "https://github.com/RobloxStatusLive/warehouse#readme",
   "dependencies": {
-    "@dmmdjs/dtools": "^0.0.3",
+    "@dmmdjs/dtools": "^0.0.4",
     "axios": "^0.26.1",
     "express": "^4.17.3",
     "md5-file": "^5.0.0"
