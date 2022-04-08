@@ -16,7 +16,7 @@ let log = new Log("logs/latest.log");
 class ServiceHandler {
     constructor(services) {
         this.services = services;
-        this.dtf = new Intl.DateTimeFormat("en-US");
+        this.dtf = new Intl.DateTimeFormat("en-US", { timeZone: "UTC" });
 
         // Initialize data directory
         if (!fs.existsSync(config["warehouse.dataLocation"])) fs.mkdirSync(config["warehouse.dataLocation"], { recursive: true });
