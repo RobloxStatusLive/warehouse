@@ -12,7 +12,7 @@ const config = require("../config/config.json");
 
 // Initialization
 const app = express()
-const dtf = new Intl.DateTimeFormat("en-US");
+const dtf = new Intl.DateTimeFormat("en-US", { timeZone: "UTC" });
 
 // Handler functions
 function formatDate(d) {
