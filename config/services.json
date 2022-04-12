@@ -6,7 +6,7 @@
     {
         "name": "Devforum",
         "id": "devforum",
-        "threshold": 2000
+        "threshold": 5000
     },
     {
         "name": "Account Info",
@@ -102,7 +102,8 @@
     },
     {
         "name": "Search",
-        "id": "search"
+        "id": "search",
+        "threshold": 900
     },
     {
         "name": "Text Filtering",
