@@ -6,7 +6,6 @@
     {
         "name": "Devforum",
         "id": "devforum",
-        "endpoint": "site.json",
         "threshold": 2000
     },
     {

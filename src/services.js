@@ -60,7 +60,7 @@ class ServiceHandler {
         let dumpData = {};
         for (let service of this.services) {
             try {
-                let req = await this.ax.get(`https://${service.id}.roblox.com/${service.endpoint ?? ''}`);
+                let req = await this.ax.get(`https://${service.id}.roblox.com`);
 
                 // Calculate status
                 let ping = req.headers.whReqElapsed,
