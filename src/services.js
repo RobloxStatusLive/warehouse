@@ -58,30 +58,39 @@ class ServiceHandler {
      */
     async fetch() {
         let dumpData = {};
+        function parse(req, service) {
+
+            // Calculate status
+            let ping = req.headers.whReqElapsed,
+                code = req.status,
+                guess = { name: "up", reason: "No problems detected" };
+
+            if (code !== 200) guess = { name: "down", reason: "Non-200 status code" }
+            else if (ping > (service.threshold || 500) ) guess = { name: "down", reason: "Ping exceeds threshold" };
+
+            // Save data
+            return {
+                id: service.id,
+                url: `https://${service.id}.roblox.com`,
+                code: code,
+                ping: ping,
+                guess: guess,
+                name: service.name,
+                machineID: req.headers["roblox-machine-id"],
+                message: req.statusText
+            };
+        }
         for (let service of this.services) {
             try {
                 let req = await this.ax.get(`https://${service.id}.roblox.com`);
-
-                // Calculate status
-                let ping = req.headers.whReqElapsed,
-                    code = req.status,
-                    guess = { name: "up", reason: "No problems detected" };
-
-                if (code !== 200) guess = { name: "down", reason: "Non-200 status code" }
-                else if (ping > (service.threshold || 500) ) guess = { name: "down", reason: "Ping exceeds threshold" };
-
-                // Save data
-                dumpData[service.id] = {
-                    id: service.id,
-                    url: `https://${service.id}.roblox.com`,
-                    code: code,
-                    ping: ping,
-                    guess: guess,
-                    name: service.name,
-                    machineID: req.headers["roblox-machine-id"],
-                    message: req.statusText
-                };
-            } catch (e) { log.log({ title: "ERROR", message: `Failed to record ${service.id} service: ${e.toString()}` }); };
+                dumpData[service.id] = parse(req, service);
+            } catch (e) {
+                if (!e.response || !e.response.status) {
+                    log.log({ title: "ERROR", message: `Failed to record ${service.id} service: ${e.toString()}` });
+                    continue;
+                }
+                dumpData[service.id] = parse(e.response, service);
+            };
         }
         this.dump(dumpData);
     }
