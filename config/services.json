@@ -41,11 +41,6 @@
         "id": "catalog"
     },
     {
-        "name": "CDN",
-        "id": "cdnproviders",
-        "code": 404
-    },
-    {
         "name": "Chat Service",
         "id": "chat"
     },
