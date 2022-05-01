@@ -42,7 +42,8 @@
     },
     {
         "name": "CDN",
-        "id": "cdnproviders"
+        "id": "cdnproviders",
+        "code": 404
     },
     {
         "name": "Chat Service",

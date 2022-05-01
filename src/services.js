@@ -63,9 +63,10 @@ class ServiceHandler {
             // Calculate status
             let ping = req.headers.whReqElapsed,
                 code = req.status,
-                guess = { name: "up", reason: "No problems detected" };
+                guess = { name: "up", reason: "No problems detected" },
+                correct_code = service.code ?? 200;
 
-            if (code !== 200) guess = { name: "down", reason: "Non-200 status code" }
+            if (code !== correct_code) guess = { name: "down", reason: `Non-${correct_code} status code` }
             else if (ping > (service.threshold || 500) ) guess = { name: "down", reason: "Ping exceeds threshold" };
 
             // Save data
