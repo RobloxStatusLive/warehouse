@@ -1,4 +1,5 @@
 {
     "warehouse.dataLocation": "./data",
-    "warehouse.webServerPort": 8080
+    "warehouse.webServerPort": 8080,
+    "warehouse.disableLogging": false
 }

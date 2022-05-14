@@ -11,6 +11,7 @@ const config = require("../config/config.json");
 
 // Logging intialization
 let log = new Log("logs/latest.log");
+let sendLog = (s) => { if (!(config["warehouse.disableLogging"] || false)) log.log(s); };
 
 // Service handler class
 class ServiceHandler {
@@ -49,7 +50,7 @@ class ServiceHandler {
         fileData[Date.now()] = data;
         fs.writeFile(dateFile, JSON.stringify(fileData), (e) => {
             if (e) return console.error(e);
-            log.log({ title: "WRITE", message: "Service times have been written to file." });
+            sendLog({ title: "WRITE", message: "Service times have been written to file." });
         });
     }
 
@@ -87,7 +88,7 @@ class ServiceHandler {
                 dumpData[service.id] = parse(req, service);
             } catch (e) {
                 if (!e.response || !e.response.status) {
-                    log.log({ title: "ERROR", message: `Failed to record ${service.id} service: ${e.toString()}` });
+                    sendLog({ title: "ERROR", message: `Failed to record ${service.id} service: ${e.toString()}` });
                     continue;
                 }
                 dumpData[service.id] = parse(e.response, service);
@@ -100,7 +101,7 @@ class ServiceHandler {
      * Starts the warehouse main loop
      */
     mainloop() {
-        log.log({ title: "START", message: "Warehouse has been started." });
+        sendLog({ title: "START", message: "Warehouse has been started." });
         setInterval(() => { this.fetch(); }, 60000);
         this.fetch();
     }
