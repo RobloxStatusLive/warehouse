@@ -75,7 +75,7 @@ class ServiceHandler {
                 id: service.id,
                 url: `https://${service.id}.roblox.com`,
                 code: code,
-                ping: ping,
+                ping: ping || 0,
                 guess: guess,
                 name: service.name,
                 machineID: req.headers["roblox-machine-id"],
