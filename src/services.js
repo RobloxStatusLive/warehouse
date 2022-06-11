@@ -4,8 +4,11 @@
 
 // Modules
 const fs = require("fs");
+const tar = require("tar-stream");
 const path = require("path");
+const zlib = require("zlib");
 const axios = require("axios").default;
+const { Readable } = require("stream");
 const { Log } = require("@dmmdjs/dtools");
 const config = require("../config/config.json");
 
@@ -33,6 +36,9 @@ class ServiceHandler {
             r.headers.whReqElapsed = Math.round((end[0] * 1000) + (end[1] / 1000000));
             return r
         });
+
+        // TarGZ Initialization
+        this._readResult = null;
     }
 
     /**
@@ -41,15 +47,54 @@ class ServiceHandler {
     get now() { return this.dtf.format(new Date()).replace(/\//g, "-"); }
 
     /**
+     * Turns a tgz file stream into a JSON-parsable string
+     * @param {Stream} stream 
+     * @returns promise
+     */
+    async streamConcat(stream) {
+        const chunks = [];
+        return new Promise((resolve, reject) => {
+          stream.on("data", (chunk) => chunks.push(Buffer.from(chunk)));
+          stream.on("error", (err) => reject(err));
+          stream.on("end", () => resolve(Buffer.concat(chunks)));
+        });
+    }
+
+    /**
      * Saves current service data to the appropriate file
      */
     async dump(data) {
-        let dateFile = path.resolve(config["warehouse.dataLocation"], `${this.now}.json`);
-        let fileData = {};
-        try { fileData = fs.existsSync(dateFile) ? JSON.parse(fs.readFileSync(dateFile)) : {}; } catch {}
-        fileData[Date.now()] = data;
-        fs.writeFile(dateFile, JSON.stringify(fileData), (e) => {
-            if (e) return console.error(e);
+        let dateFile = path.resolve(config["warehouse.dataLocation"], `${this.now}.tgz`);
+
+        // Load existing data
+        if (fs.existsSync(dateFile)) {
+            let extract = tar.extract();
+            extract.on("entry", async (header, stream, next) => {
+                if (this._readResult) throw new Error("Another targz entry was detected, however we already got our result!");
+                this._readResult = JSON.parse((await this.streamConcat(stream)).toString("UTF-8"));
+                next();  // Should never do anything; if it does, we're in trouble.
+            })
+            let stream = Readable.from(zlib.gunzipSync(await this.streamConcat(fs.createReadStream(dateFile))));
+            stream.pipe(extract);
+
+            // Wait for our result
+            var that = this;
+            await (() => {
+                function internalWait(resolve, reject) {
+                    if (that._readResult) resolve();
+                    else setTimeout(internalWait.bind(this, resolve, reject), 30);
+                }
+                return new Promise(internalWait);
+            })();
+            this._readResult[Date.now()] = data;
+        } else this._readResult = { [Date.now()]: data };
+
+        // Begin packing into a tar.gz file
+        let pack = tar.pack();
+        pack.entry({ name: `${this.now}.json` }, JSON.stringify(this._readResult));
+        pack.finalize();
+        fs.writeFile(dateFile, zlib.gzipSync(await this.streamConcat(pack)), (e) => {
+            this._readResult = null;  // Save on our precious memory
             sendLog({ title: "WRITE", message: "Service times have been written to file." });
         });
     }

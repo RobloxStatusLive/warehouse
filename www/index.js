@@ -22,7 +22,7 @@ function getPastWeek() {
     let week = {}, now = new Date();
     for (let i = 0; i < 5; i++) {
         let date = formatDate(new Date(now - (i * 86400000)));
-        let fpath = path.resolve(config["warehouse.dataLocation"], `${date}.json`);
+        let fpath = path.resolve(config["warehouse.dataLocation"], `${date}.tgz`);
         if (fs.existsSync(fpath)) week[date] = crypto.createHash("md5").update(fs.readFileSync(fpath)).digest("hex");
     }
     return week;
@@ -35,7 +35,7 @@ app.get("/sync/status", (req, res) => {
 app.get("/sync/:date", (req, res) => {
     try {
         let date = formatDate(new Date(req.params.date));
-        let fpath = path.resolve(config["warehouse.dataLocation"], `${date}.json`);
+        let fpath = path.resolve(config["warehouse.dataLocation"], `${date}.tgz`);
         if (!fs.existsSync(fpath)) return res.sendStatus(404);
         return res.send(fs.readFileSync(fpath));
     } catch {

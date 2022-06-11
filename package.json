@@ -1,6 +1,6 @@
 {
   "name": "warehouse",
-  "version": "1.0.1",
+  "version": "1.0.6",
   "description": "The Roblox Status Live data warehouse",
   "main": "index.js",
   "scripts": {
@@ -21,6 +21,7 @@
   "dependencies": {
     "@dmmdjs/dtools": "^0.0.4",
     "axios": "^0.26.1",
-    "express": "^4.17.3"
+    "express": "^4.17.3",
+    "tar-stream": "^2.2.0"
   }
 }
